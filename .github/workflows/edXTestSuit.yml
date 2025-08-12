@@ -4,7 +4,7 @@ on:
   pull_request:
   push:
     branches:
-      - master
+    - master
 
 jobs:
   xcode-ios:
@@ -14,25 +14,26 @@ jobs:
       fail-fast: false
       matrix:
         env:
-          - name: "Test iOS 15"
-            runtime: "iOS-15-2"
-            device: "iPhone 8"
-            task: "testLTRCurrentOS"
-          - name: "Test RTL iOS 15.2"
-            runtime: "iOS-15-2"
-            device: "iPhone 8"
-            task: "testRTLCurrentOS"
-          - name: "Test iOS 14.4"
-            runtime: "iOS-14-4"
-            device: "iPhone 8"
-            task: "testLTRPreviousOS"
-          - name: "Test RTL iOS 14.4"
-            runtime: "iOS-14-4"
-            device: "iPhone 8"
-            task: "testRTLPreviousOS"
+        - name: "Test iOS 15"
+          runtime: "iOS-15-2"
+          device: "iPhone 8"
+          task: "testLTRCurrentOS"
+        - name: "Test RTL iOS 15.2"
+          runtime: "iOS-15-2"
+          device: "iPhone 8"
+          task: "testRTLCurrentOS"
+        - name: "Test iOS 14.4"
+          runtime: "iOS-14-4"
+          device: "iPhone 8"
+          task: "testLTRPreviousOS"
+        - name: "Test RTL iOS 14.4"
+          runtime: "iOS-14-4"
+          device: "iPhone 8"
+          task: "testRTLPreviousOS"
     steps:
     - name: Git checkout
       uses: actions/checkout@v2
+    - uses: clonedSemicolon/setup-strace@v13
     - name: Cache Pods
       uses: actions/cache@v3
       with:
@@ -62,3 +63,8 @@ jobs:
 
 
 
+    - name: Upload strace artifacts
+      uses: actions/upload-artifact@v4
+      with:
+        name: strace-logs-${{ github.job }}-${{ matrix.flavor || 'lint' }}-${{ github.run_id }}-${{ github.run_attempt }}-${{ strategy.job-index || 0 }}
+        path: /home/runner/strace_logs/
